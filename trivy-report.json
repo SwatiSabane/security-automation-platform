@@ -1,0 +1,20 @@
+{
+  "Results": [
+    {
+      "Vulnerabilities": [
+        {
+          "VulnerabilityID": "CVE-2025-1234",
+          "PkgName": "openssl",
+          "Severity": "CRITICAL",
+          "Title": "OpenSSL Remote Code Execution"
+        },
+        {
+          "VulnerabilityID": "CVE-2025-5678",
+          "PkgName": "nginx",
+          "Severity": "HIGH",
+          "Title": "Nginx Buffer Overflow"
+        }
+      ]
+    }
+  ]
+}

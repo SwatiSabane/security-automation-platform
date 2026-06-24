@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload Trivy Report</title>
+</head>
+<body>
+
+    <h1>Upload Trivy Report</h1>
+
+    
+
+            {% if message %}
+        <div style="
+            color: green;
+            font-weight: bold;
+            margin-bottom: 15px;
+        ">
+            {{ message }}
+        </div>
+        {% endif %}
+
+
+
+    <form method="post"
+          enctype="multipart/form-data">
+
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <button type="submit">
+            Upload
+        </button>
+
+    </form>
+
+</body>
+</html>
