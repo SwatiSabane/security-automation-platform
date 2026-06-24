@@ -83,7 +83,8 @@ def upload_report_api(request):
     )
 
     return Response({
-        "status": "success",
-        "imported": imported_count,
-        "skipped": skipped_count
-    })
+    "status": "success",
+    "results_found": len(results),
+    "imported": imported_count,
+    "skipped": skipped_count
+})
