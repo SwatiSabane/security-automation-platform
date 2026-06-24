@@ -78,6 +78,11 @@ from .models import Vulnerability
 import os
 import json
 
+from django.shortcuts import render
+from .forms import ReportUploadForm
+from .models import Vulnerability
+import json
+
 
 def upload_report(request):
 
@@ -92,90 +97,74 @@ def upload_report(request):
 
         if form.is_valid():
 
-            uploaded_file = request.FILES['report_file']
+            try:
 
-            save_path = os.path.join(
-                'uploads',
-                uploaded_file.name
-            )
+                uploaded_file = request.FILES['report_file']
 
-            # Save uploaded file
-            with open(
-                save_path,
-                'wb+'
-            ) as destination:
+                # Read JSON directly from uploaded file
+                data = json.load(uploaded_file)
 
-                for chunk in uploaded_file.chunks():
+                imported_count = 0
+                skipped_count = 0
 
-                    destination.write(chunk)
-
-            # Read JSON file
-            with open(
-                save_path,
-                'r',
-                encoding='utf-8'
-            ) as file:
-
-                data = json.load(file)
-
-            imported_count = 0
-            skipped_count = 0
-
-            results = data.get(
-                "Results",
-                []
-            )
-
-            for result in results:
-
-                vulnerabilities = result.get(
-                    "Vulnerabilities",
+                results = data.get(
+                    "Results",
                     []
                 )
-                
 
-                for vuln in vulnerabilities:
+                for result in results:
 
-                    cve = vuln.get(
-                        "VulnerabilityID"
+                    vulnerabilities = result.get(
+                        "Vulnerabilities",
+                        []
                     )
 
-                    package = vuln.get(
-                        "PkgName"
-                    )
+                    for vuln in vulnerabilities:
 
-                    severity = vuln.get(
-                        "Severity"
-                    )
+                        cve = vuln.get(
+                            "VulnerabilityID",
+                            "UNKNOWN"
+                        )
 
-                    description = vuln.get(
-                        "Title",
-                        "No Description"
-                    )
+                        package = vuln.get(
+                            "PkgName",
+                            "Unknown Package"
+                        )
 
-                    obj, created = Vulnerability.objects.get_or_create(
-                        cve_id=cve,
-                        defaults={
-                            'package_name': package,
-                            'severity': severity.title(),
-                            'description': description,
-                            'status': 'Open'
-                        }
-                    )
+                        severity = vuln.get(
+                            "Severity",
+                            "Unknown"
+                        )
 
-                    if created:
-                        imported_count += 1
-                        print(f"Saved: {cve}")
+                        description = vuln.get(
+                            "Title",
+                            "No Description"
+                        )
 
-                    else:
-                        skipped_count += 1
-                        print(f"Skipped: {cve}")
+                        obj, created = Vulnerability.objects.get_or_create(
+                            cve_id=cve,
+                            defaults={
+                                'package_name': package,
+                                'severity': str(severity).title(),
+                                'description': description,
+                                'status': 'Open'
+                            }
+                        )
 
-            message = (
-                f"Import Complete | "
-                f"Imported: {imported_count} | "
-                f"Skipped: {skipped_count}"
-            )
+                        if created:
+                            imported_count += 1
+                        else:
+                            skipped_count += 1
+
+                message = (
+                    f"Import Complete | "
+                    f"Imported: {imported_count} | "
+                    f"Skipped: {skipped_count}"
+                )
+
+            except Exception as e:
+
+                message = f"Error: {str(e)}"
 
     else:
 
