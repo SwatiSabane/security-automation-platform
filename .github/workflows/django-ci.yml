@@ -49,6 +49,14 @@ jobs:
           format: 'json'
           output: 'trivy-report.json'
 
+      - name: Send Trivy Report to Dashboard
+        run: |
+            curl -X POST \
+            -H "Content-Type: application/json" \
+            --data @trivy-report.json \
+            https://security-automation-platform-paa9.onrender.com/api/upload-report/
+
+
       - name: Upload Trivy Report
         uses: actions/upload-artifact@v4
         with:
