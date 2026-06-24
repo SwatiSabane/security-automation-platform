@@ -83,8 +83,8 @@ def upload_report_api(request):
     )
 
     return Response({
-    "status": "success",
-    "results_found": len(results),
+    "status": "SUCCESS_TEST",
+    "message": "NEW CODE DEPLOYED",
     "imported": imported_count,
     "skipped": skipped_count
 })
