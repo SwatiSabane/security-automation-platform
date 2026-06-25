@@ -82,10 +82,13 @@ def upload_report_api(request):
         f"Skipped: {skipped_count}"
     )
     print("Total records:", Vulnerability.objects.count())
+    print("Results found:", len(results))
+
     return Response({
     "status": "SUCCESS_TEST",
     "message": "NEW CODE DEPLOYED",
     "imported": imported_count,
     "skipped": skipped_count,
-    "database_count": Vulnerability.objects.count()
+    "database_count": Vulnerability.objects.count(),
+    "results_found": len(results)
 })
