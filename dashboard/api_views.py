@@ -29,6 +29,9 @@ def upload_report_api(request):
             []
         )
 
+        print("Vulnerabilities found:", len(vulnerabilities))
+        print(vulnerabilities[:1])
+
         vuln_count = len(vulnerabilities)
 
         total_vulnerabilities += vuln_count
