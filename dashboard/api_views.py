@@ -1,6 +1,5 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-
 from .models import Vulnerability
 
 
@@ -13,11 +12,9 @@ def upload_report_api(request):
 
     data = request.data
 
-    print("Top-level keys:")
-    print(data.keys())
-
     imported_count = 0
     skipped_count = 0
+    total_vulnerabilities = 0
 
     results = data.get("Results", [])
 
@@ -32,9 +29,13 @@ def upload_report_api(request):
             []
         )
 
+        vuln_count = len(vulnerabilities)
+
+        total_vulnerabilities += vuln_count
+
         print(
             f"Target: {target} | "
-            f"Vulnerabilities: {len(vulnerabilities)}"
+            f"Vulnerabilities: {vuln_count}"
         )
 
         for vuln in vulnerabilities:
@@ -77,18 +78,21 @@ def upload_report_api(request):
                 skipped_count += 1
                 print(f"Skipped: {cve}")
 
-    print(
-        f"Final Result -> Imported: {imported_count}, "
-        f"Skipped: {skipped_count}"
-    )
-    print("Total records:", Vulnerability.objects.count())
-    print("Results found:", len(results))
+    print("=" * 50)
+    print("SUMMARY")
+    print("=" * 50)
+    print(f"Results Found: {len(results)}")
+    print(f"Vulnerabilities Found: {total_vulnerabilities}")
+    print(f"Imported: {imported_count}")
+    print(f"Skipped: {skipped_count}")
+    print(f"Database Count: {Vulnerability.objects.count()}")
 
     return Response({
-    "status": "SUCCESS_TEST",
-    "message": "NEW CODE DEPLOYED",
-    "imported": imported_count,
-    "skipped": skipped_count,
-    "database_count": Vulnerability.objects.count(),
-    "results_found": len(results)
-})
+        "status": "SUCCESS_TEST",
+        "message": "NEW CODE DEPLOYED",
+        "results_found": len(results),
+        "vulnerabilities_found": total_vulnerabilities,
+        "imported": imported_count,
+        "skipped": skipped_count,
+        "database_count": Vulnerability.objects.count()
+    })
