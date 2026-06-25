@@ -81,11 +81,11 @@ def upload_report_api(request):
         f"Final Result -> Imported: {imported_count}, "
         f"Skipped: {skipped_count}"
     )
-    print("DATABASE COUNT =", Vulnerability.objects.count())
+    print("Total records:", Vulnerability.objects.count())
     return Response({
     "status": "SUCCESS_TEST",
     "message": "NEW CODE DEPLOYED",
     "imported": imported_count,
-    "skipped": skipped_count
+    "skipped": skipped_count,
     "database_count": Vulnerability.objects.count()
 })
