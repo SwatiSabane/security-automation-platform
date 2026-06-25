@@ -57,6 +57,10 @@ jobs:
             https://security-automation-platform-paa9.onrender.com/api/upload-report/
 
 
+      - name: Show vulnerability count
+        run: |
+              grep -o "VulnerabilityID" trivy-report.json | wc -l
+
       - name: Upload Trivy Report
         uses: actions/upload-artifact@v4
         with:
